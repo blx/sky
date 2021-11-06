@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<style>
+:root {
+    --daylight: 0.85;
+}
+body {
+    background: #89b;
+    padding: 0; margin: 0;
+    font-size: 16px;
+    overflow: hidden;
+}
+.sky-control {
+    position: absolute;
+    z-index: 10;
+    top: 1.5rem;
+    width: 200px;
+    left: calc(50% - 100px);
+    opacity: 0.5;
+}
+input[type=range] {
+    width: 100%;
+}
+.sun-container {
+    position: absolute;
+    z-index: 3;
+    width: 7vw; height: 7vw;
+    border-radius: 47%;
+    top: calc(111vh - ((var(--daylight) - 0.15) * (var(--daylight) - 0.0) * 132vh));
+    left: calc(var(--daylight) * 100vw - (7vw / 1.5));
+    background: #feb;
+    box-shadow: 0 0 calc(min(var(--daylight)*2, 1) * 100px) #ffff, 0 0 calc(min(var(--daylight)*1.5, 1) * 300px) pink;
+    filter: blur(1px);
+    filter: blur(calc(9px - (8px * var(--daylight))));
+    transform: scale(calc(2.5 - var(--daylight)/0.55));
+}
+.sky-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    background: #acf;
+    background: linear-gradient(172deg, #acf, #7bf);
+    filter: saturate(var(--daylight)) brightness(calc(0.25 + var(--daylight)/1.3));
+}
+.sunset {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    left: 0; bottom: 0;
+    background: linear-gradient(180deg, #f990 20%, #fb9c),
+       radial-gradient(at bottom, #f037, #f990 50%);
+    /* opacity: calc(0.5 + -1*((var(--daylight)+0.5) * (var(--daylight)+0.5))); */
+    opacity: calc(1 + -16 * (var(--daylight) - 0.55) * (var(--daylight) - 0.55));
+}
+.ground-container {
+    position: absolute;
+    z-index: 5;
+    bottom: 0;
+    width: 100%;
+    height: 8vh;
+    background: #b88;
+    clip-path: ellipse(60% 90% at bottom);
+    filter: brightness(calc(0.45 + min(0.65, 0.8 * var(--daylight))));
+}
+</style>
+<body>
+<div class="sky-control">
+    <input type="range" min="0" max="1" step="0.01">
+</div>
+
+<div class="sun-container">
+</div>
+
+<div class="sunset">
+</div>
+
+<div class="sky-container">
+    <svg width="100%" height="100%" style="display:block; opacity:0.3; filter:saturate(0.1);">
+        <filter id="noise" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence baseFrequency="0.58" seed="102" />
+        </filter>
+        <rect x="0" y="0" width="110%" height="100%" filter="url(#noise)" fill="none">
+    </svg>
+</div>
+
+<div class="ground-container">
+    <svg width="100%" height="100%" style="display:block; opacity:0.2; filter:saturate(0.1) sepia(0.4);">
+        <filter id="noise1" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence baseFrequency="0.4" seed="109" />
+        </filter>
+        <rect x="0" y="0" width="110%" height="100%" filter="url(#noise1)" fill="none">
+    </svg>
+</div>
+<script>
+const root = document.documentElement;
+document.querySelector('.sky-control input').addEventListener('input', e => {
+    root.style.setProperty('--daylight', e.currentTarget.value);
+});
+document.querySelector('.sky-control input').value = getComputedStyle(root).getPropertyValue('--daylight');
+</script>
+</body>
+</html>
